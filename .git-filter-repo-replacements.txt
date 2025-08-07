@@ -1,0 +1,8 @@
+# git-filter-repo replace-text rules
+# Replace any hardcoded api_key in config/prism.php with env('OPENAI_API_KEY')
+regex:'api_key'\s*=>\s*(['"]).*?\1 --> 'api_key' => env('OPENAI_API_KEY')
+regex:"api_key"\s*=>\s*(['"]).*?\1 --> 'api_key' => env('OPENAI_API_KEY')
+# Replace env fallback values like env('OPENAI_API_KEY', 'sk-...')
+regex:env\(\s*['"]OPENAI_API_KEY['"]\s*,\s*['"].*?['"]\s*\) --> env('OPENAI_API_KEY')
+# Hard scrub any OpenAI-like keys that slipped through
+regex:sk-[A-Za-z0-9_-]{20,} --> REDACTED

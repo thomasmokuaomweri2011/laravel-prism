@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@layer components {
+  .chat-bubble { @apply px-4 py-2 rounded-2xl max-w-[80%] text-sm leading-relaxed shadow whitespace-pre-wrap break-words; }
+  .chat-user { @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-br-none; }
+  .chat-assistant { @apply bg-gray-100 text-gray-900 rounded-bl-none; }
+  .chat-tool { @apply bg-amber-100 text-amber-900 rounded-bl-none; }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar { @apply w-2; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { @apply bg-gray-300 rounded-full; }
+  .scrollbar-thin:hover::-webkit-scrollbar-thumb { @apply bg-gray-400; }
+}
