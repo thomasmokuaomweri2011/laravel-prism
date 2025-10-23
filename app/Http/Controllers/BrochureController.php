@@ -57,6 +57,13 @@ Return only valid JSON with this schema:
     "services": ["service 1", "service 2"],
     "contact": "string"
   },
+  "french": {
+    "title": "string",
+    "tagline": "string",
+    "mission": "string",
+    "services": ["service 1", "service 2"],
+    "contact": "string"
+  },
   "logo": "absolute url string"
 }
 
@@ -81,7 +88,7 @@ PROMPT;
                 $parsed = [];
             }
 
-            foreach (['english', 'swahili'] as $lang) {
+            foreach (['english', 'swahili', 'french'] as $lang) {
                 if (isset($parsed[$lang]['services']) && is_string($parsed[$lang]['services'])) {
                     $parsed[$lang]['services'] = preg_split('/[\n,;]+/', $parsed[$lang]['services']);
                 }
@@ -115,6 +122,7 @@ PROMPT;
                 'logo' => $logo,
                 'english' => $parsed['english'] ?? [],
                 'swahili' => $parsed['swahili'] ?? [],
+                'french' => $parsed['french'] ?? [],
             ];
         }
 
