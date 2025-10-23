@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'serp' => [
+        'api_key' => env('SERPAPI_KEY'),
+    ],
 
 ];

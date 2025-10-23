@@ -4,35 +4,26 @@
     <div
             x-data="chatComponent()"
             class="w-full max-w-4xl h-[85vh] flex flex-col bg-gradient-to-b from-[#f7fbff] via-[#edf4fa] to-[#e8eef6]
-           border border-slate-200 rounded-2xl shadow-2xl overflow-hidden"
+       border border-slate-200 rounded-2xl shadow-2xl overflow-hidden"
     >
-        <!-- Top bar -->
+        <!-- Header -->
         <div class="flex items-center justify-between gap-2 p-4 border-b bg-gradient-to-r from-[#e4edfb] to-[#d8e4f8]">
             <div class="flex items-center gap-3">
-                <div class="size-9 rounded-full bg-indigo-500 text-white grid place-items-center text-lg shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M13 16h-1v-4h-1m2 4v-4h1v4m-2-4V8m4 12H6a2 2 0 01-2-2V6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v8a2 2 0 01-2 2z" />
-                    </svg>
-                </div>
+                <div class="size-9 rounded-full bg-indigo-500 text-white grid place-items-center text-lg shadow-sm">⚙️</div>
                 <div>
                     <h2 class="text-xl font-semibold text-slate-800">Chat with Tools</h2>
-                    <p class="text-xs text-slate-500">Ask your creative assistant for ideas or code.</p>
+                    <p class="text-xs text-slate-500">Ask your assistant about weather, web results, or code ideas.</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button
-                        @click="clearChat"
-                        class="px-3 py-2 text-sm rounded-lg border text-slate-700 bg-white/60 hover:bg-white/80 transition"
-                >
+                <button @click="clearChat"
+                        class="px-3 py-2 text-sm rounded-lg border text-slate-700 bg-white/60 hover:bg-white/80 transition">
                     Clear
                 </button>
-                <button
-                        @click="stop"
+                <button @click="stop"
                         :disabled="!isStreaming"
                         class="px-3 py-2 text-sm rounded-lg border border-indigo-300 text-indigo-700 bg-indigo-50 hover:bg-indigo-100
-                       transition disabled:opacity-40 disabled:cursor-not-allowed"
-                >
+                       transition disabled:opacity-40 disabled:cursor-not-allowed">
                     Stop
                 </button>
             </div>
@@ -57,13 +48,9 @@
             <!-- Messages -->
             <template x-for="msg in messages" :key="msg.id">
                 <div class="flex items-start gap-3" :class="msg.role === 'user' ? 'justify-end' : 'justify-start'">
+                    <!-- Assistant -->
                     <template x-if="msg.role !== 'user'">
-                        <div class="size-8 rounded-full bg-indigo-100 grid place-items-center text-indigo-600 shadow-inner">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 6v6l4 2m-4-8a9 9 0 110 18 9 9 0 010-18z" />
-                            </svg>
-                        </div>
+                        <div class="size-8 rounded-full bg-indigo-100 grid place-items-center text-indigo-600 shadow-inner">🤖</div>
                     </template>
 
                     <div
@@ -75,13 +62,9 @@
                         <span x-text="msg.content"></span>
                     </div>
 
+                    <!-- User -->
                     <template x-if="msg.role === 'user'">
-                        <div class="size-8 rounded-full bg-blue-500 text-white grid place-items-center shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M5.121 17.804A13.937 13.937 0 0112 15c2.49 0 4.814.642 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </div>
+                        <div class="size-8 rounded-full bg-blue-500 text-white grid place-items-center shadow-md">👤</div>
                     </template>
                 </div>
             </template>
@@ -108,19 +91,18 @@
                 rows="1"
                 placeholder="Type your message (Shift+Enter for newline)"
                 class="flex-1 resize-none max-h-40 px-4 py-3 rounded-xl border border-slate-200 bg-white
-                   placeholder-slate-400 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+               placeholder-slate-400 focus:ring-2 focus:ring-blue-400 focus:outline-none"
         ></textarea>
 
             <button
                     @click="sendMessage"
                     :disabled="!input.trim() || isStreaming"
                     class="px-5 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-500
-                   hover:from-blue-600 hover:to-indigo-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed
-                   flex items-center gap-2 shadow-md"
+               hover:from-blue-600 hover:to-indigo-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed
+               flex items-center gap-2 shadow-md"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M5 12h14M12 5l7 7-7 7" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
                 Send
             </button>
@@ -142,30 +124,40 @@
                 controller: null,
                 error: '',
                 suggestions: [
-                    'Give me creative brochure ideas',
-                    'Summarize this Laravel page: https://laravel.com/docs',
-                    'Explain Vite config for Laravel',
-                    'Generate a Blade layout with Tailwind styles'
+                    'What’s the weather in Nairobi right now?',
+                    'Search the web for latest AI trends',
+                    'Summarize https://laravel.com/docs',
+                    'Generate a PHP class using Guzzle'
                 ],
+
                 newId() { return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`; },
+
                 autoResize() {
-                    const ta = this.$refs.ta; ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 160) + 'px';
+                    const ta = this.$refs.ta;
+                    ta.style.height = 'auto';
+                    ta.style.height = Math.min(ta.scrollHeight, 160) + 'px';
                 },
+
                 useSuggestion(s) { this.input = s; this.$nextTick(() => this.$refs.ta.focus()); },
-                clearChat() { this.messages = []; this.error='';this.input=''; },
+                clearChat() { this.messages = []; this.error=''; this.input=''; },
                 stop() { if (this.controller) { this.controller.abort(); this.isStreaming = false; } },
+
                 async sendMessage() {
                     if (!this.input.trim() || this.isStreaming) return;
-                    this.error='';
+                    this.error = '';
+
                     this.messages.push({ id: this.newId(), role: 'user', content: this.input });
                     const assistantId = this.newId();
                     this.messages.push({ id: assistantId, role: 'assistant', content: '' });
+
                     const idxOf = () => this.messages.findIndex(m => m.id === assistantId);
 
                     this.controller = new AbortController();
                     this.isStreaming = true;
+
                     const body = JSON.stringify({ messages: this.messages });
-                    window.fetchEventSource('/chat-stream-run', {
+
+                    window.fetchEventSource('/chat-tools-run', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -174,28 +166,64 @@
                         body,
                         signal: this.controller.signal,
                         onmessage: (event) => {
-                            if (event.data === '[DONE]') { this.isStreaming = false; return; }
                             try {
                                 const data = JSON.parse(event.data);
-                                if (data.role && data.role !== 'assistant') {
-                                    this.messages.push({ id: this.newId(), role: data.role, content: data.token || data.content || '' });
-                                } else if (data.token) {
-                                    const i = idxOf();
-                                    if (i !== -1) this.messages[i].content += data.token;
+
+                                // When a tool is called
+                                if (event.event === 'tool_call') {
+                                    const toolName = data.name || data.tool || data.tool_name || 'tool';
+                                    this.messages.push({
+                                        id: this.newId(),
+                                        role: 'assistant',
+                                        content: `🔧 Using ${toolName}…`
+                                    });
                                 }
-                                this.$nextTick(() => {
-                                    const el = document.getElementById('chat-window');
-                                    el.scrollTop = el.scrollHeight;
-                                });
-                            } catch (e) { console.error('Chunk parse error', e, event.data); }
+
+                                // When a tool completes
+                                else if (event.event === 'tool_result') {
+                                    const toolName = data.name || data.tool || data.tool_name || 'tool';
+                                    const idx = this.messages.findIndex(m => m.content.includes('Using'));
+                                    if (idx !== -1) {
+                                        this.messages[idx].content = `✅ ${toolName} completed.`;
+                                    }
+                                }
+
+                                // Stream text as usual
+                                else if (event.event === 'text_delta') {
+                                    const delta = data.delta || '';
+                                    let msg = this.messages.find(m => m.role === 'assistant' && m.streaming);
+                                    if (!msg) {
+                                        msg = { id: this.newId(), role: 'assistant', streaming: true, content: '' };
+                                        this.messages.push(msg);
+                                    }
+                                    msg.content += delta;
+                                }
+
+                                // End of stream
+                                else if (event.event === 'stream_end') {
+                                    const idx = this.messages.findIndex(m => m.streaming);
+                                    if (idx !== -1) this.messages[idx].streaming = false;
+                                    this.isStreaming = false;
+                                }
+                            } catch (err) {
+                                console.error('Stream parse error', err, event.data);
+                            }
+
+                            this.$nextTick(() => {
+                                const el = document.getElementById('chat-window');
+                                if (el) el.scrollTop = el.scrollHeight;
+                            });
                         },
+
                         onerror: (err) => {
                             console.error('Stream error', err);
                             this.error = 'Connection lost. Please try again.';
                             this.isStreaming = false;
                         },
+
                         onclose: () => { this.isStreaming = false; },
                     });
+
                     this.input = '';
                     this.$nextTick(() => this.autoResize());
                 }

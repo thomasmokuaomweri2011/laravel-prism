@@ -14,7 +14,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "prism-php/prism": "^0.83.2",
+        "prism-php/prism": "^0.96",
         "prism-php/relay": "^1.3",
         "symfony/css-selector": "^7.3",
         "symfony/dom-crawler": "^7.3"

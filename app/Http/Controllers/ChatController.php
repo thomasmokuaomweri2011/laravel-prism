@@ -46,28 +46,11 @@ class ChatController extends Controller
             };
         })->filter()->values()->toArray();
 
-        return response()->stream(function () use ($messages) {
-            $stream = Prism::text()
-                ->using(Provider::OpenAI, 'gpt-4o')
-                ->withSystemPrompt('You are a helpful assistant.')
-                ->withMessages($messages)
-                ->asStream();
-
-            foreach ($stream as $chunk) {
-                echo "data: " . json_encode(['token' => $chunk->text]) . "\n\n";
-                ob_flush();
-                flush();
-            }
-
-            echo "data: [DONE]\n\n";
-            ob_flush();
-            flush();
-        }, 200, [
-            'Content-Type' => 'text/event-stream',
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Connection' => 'keep-alive',
-            'X-Accel-Buffering' => 'no',
-        ]);
+        return Prism::text()
+            ->using(Provider::OpenAI, 'gpt-4o')
+            ->withSystemPrompt('You are a helpful assistant.')
+            ->withMessages($messages)
+            ->asEventStreamResponse();
     }
 
     public function chatWithTools(Request $request)
@@ -86,26 +69,13 @@ class ChatController extends Controller
             };
         })->filter()->values()->toArray();
 
-        return response()->stream(function () use ($messages) {
-            $response = Prism::text()
-                ->using(Provider::OpenAI, 'gpt-4o')
-                ->withSystemPrompt('You are a helpful assistant with access to weather and web search tools.')
-                ->withMessages($messages)
-                ->withMaxSteps(3)
-                ->withTools($this->tools())
-                ->asStream();
-            foreach ($response as $chunk) {
-                echo "data: " . json_encode(['token' => $chunk->text, 'toolResults' => $chunk->toolResults]) . "\n\n";
-                ob_flush();
-                flush();
-            }
-        }, 200, [
-            'Content-Type' => 'text/event-stream',
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Connection' => 'keep-alive',
-            'X-Accel-Buffering' => 'no',
-
-        ]);
+        return Prism::text()
+            ->using(Provider::OpenAI, 'gpt-4o')
+            ->withSystemPrompt('You are a helpful assistant with access to weather and web search tools.')
+            ->withMessages($messages)
+            ->withMaxSteps(3)
+            ->withTools($this->tools())
+            ->asEventStreamResponse();
     }
 
     protected function tools(): array
@@ -120,14 +90,24 @@ class ChatController extends Controller
                         'api_key' => config('services.serp.api_key'),
                     ]);
 
-                    if ($res->ok()) {
-                        $data = $res->json();
-                        $results = collect($data['organic_results'] ?? [])->take(3);
-                        return $results->map(fn($r) => ($r['title'] ?? '') . ' - ' . ($r['link'] ?? ''))
-                            ->implode("\n");
+                    if (!$res->ok()) {
+                        return "Search failed for query: {$query}";
                     }
 
-                    return "Search failed for query: {$query}";
+                    $data = $res->json();
+
+                    // Extract the most relevant titles & links
+                    $results = collect($data['top_stories'] ?? $data['organic_results'] ?? [])
+                        ->take(3)
+                        ->map(function ($r) {
+                            $title = $r['title'] ?? '';
+                            $source = $r['source'] ?? ($r['displayed_link'] ?? '');
+                            $link = $r['link'] ?? '';
+                            return "- {$title} ({$source}) → {$link}";
+                        })
+                        ->implode("\n");
+
+                    return $results ?: "No relevant results found for query: {$query}";
                 }),
         ];
     }
