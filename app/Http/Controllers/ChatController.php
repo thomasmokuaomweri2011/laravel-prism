@@ -73,7 +73,7 @@ class ChatController extends Controller
             ->using(Provider::OpenAI, 'gpt-4o')
             ->withSystemPrompt('You are a helpful assistant with access to weather and web search tools.')
             ->withMessages($messages)
-            ->withMaxSteps(3)
+            ->withMaxSteps(5)
             ->withTools($this->tools())
             ->asEventStreamResponse();
     }
@@ -108,6 +108,15 @@ class ChatController extends Controller
                         ->implode("\n");
 
                     return $results ?: "No relevant results found for query: {$query}";
+                }),
+            Tool::as('calculator')
+                ->for('Perform mathematical calculations')
+                ->withNumberParameter('a', 'First number')
+                ->withNumberParameter('b', 'Second number')
+                ->using(function (float $a, float $b): string {
+                    $product = $a * $b;
+
+                    return "The product of {$a} and {$b} is {$product}.";
                 }),
         ];
     }
