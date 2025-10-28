@@ -7,96 +7,104 @@
         body {
             font-family: DejaVu Sans, sans-serif;
             color: #222;
-            margin: 30px;
-            line-height: 1.5;
-            font-size: 14px;
-        }
-        h1, h2 {
-            color: #1a1a1a;
+            margin: 35px;
+            line-height: 1.6;
+            font-size: 13.5px;
         }
         h1 {
             text-align: center;
             font-size: 24px;
-            margin-bottom: 10px;
+            margin-bottom: 25px;
+            color: #111;
         }
         h2 {
-            font-size: 18px;
-            margin-top: 25px;
+            font-size: 17px;
+            margin-top: 30px;
             margin-bottom: 10px;
+            color: #222;
         }
-        p {
-            margin: 5px 0;
-        }
-        ul {
-            margin: 5px 0 10px 20px;
-        }
+        p { margin: 4px 0; }
+        ul { margin: 6px 0 10px 25px; }
+        li { margin-bottom: 2px; }
+
         .logo {
             display: block;
             margin: 0 auto 20px auto;
             max-height: 80px;
         }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
         hr {
             border: none;
             border-top: 1px solid #ccc;
-            margin: 20px 0;
+            margin: 25px 0;
         }
+
         .footer {
             text-align: center;
-            font-size: 12px;
-            margin-top: 30px;
+            font-size: 11.5px;
+            margin-top: 40px;
+            color: #555;
+        }
+
+        .tagline {
+            font-style: italic;
             color: #555;
         }
     </style>
 </head>
 <body>
 
-<!-- Logo -->
+{{-- Logo --}}
 @if(!empty($brochure['logo']))
-    <img src="{{ $brochure['logo'] }}" class="logo" alt="Logo" style="max-height:80px; display:block; margin:0 auto 20px;">
+    <img src="{{ $brochure['logo'] }}" alt="Logo" class="logo">
 @endif
 
+{{-- Title --}}
 <h1>{{ $brochure['english']['title'] ?? 'Brochure' }}</h1>
 
-<!-- Dynamic Language Sections -->
-@foreach($brochure as $lang => $data)
-    @continue(in_array($lang, ['url', 'logo'])) {{-- skip non-language keys --}}
+{{-- Dynamic Languages --}}
+@php
+    $languages = collect($brochure)->except(['url', 'logo'])->toArray();
+    $flags = [
+        'english' => '🇬🇧',
+        'swahili' => '🇰🇪',
+        'french'  => '🇫🇷',
+    ];
+@endphp
 
-    @php
-        $languageName = ucfirst($lang);
-        $flag = match($lang) {
-            'english' => '🇬🇧',
-            'swahili' => '🇰🇪',
-            'french' => '🇫🇷',
-            default => '🌐'
-        };
-    @endphp
+@foreach($languages as $lang => $data)
+    <div class="section">
+        <h2>{{ $flags[$lang] ?? '🌐' }} {{ ucfirst($lang) }} Version</h2>
 
-    <h2>{{ $flag }} {{ $languageName }} Version</h2>
+        @if(!empty($data['title']))
+            <p><strong>Title:</strong> {{ $data['title'] }}</p>
+        @endif
 
-    @if(!empty($data['title']))
-        <p><strong>Title:</strong> {{ $data['title'] }}</p>
-    @endif
+        @if(!empty($data['tagline']))
+            <p class="tagline">"{{ $data['tagline'] }}"</p>
+        @endif
 
-    @if(!empty($data['tagline']))
-        <p><em>"{{ $data['tagline'] }}"</em></p>
-    @endif
+        @if(!empty($data['mission']))
+            <p><strong>Mission:</strong> {{ $data['mission'] }}</p>
+        @endif
 
-    @if(!empty($data['mission']))
-        <p><strong>Mission:</strong> {{ $data['mission'] }}</p>
-    @endif
+        @if(!empty($data['services']) && is_array($data['services']) && count($data['services']) > 0)
+            <p><strong>Services:</strong></p>
+            <ul>
+                @foreach($data['services'] as $service)
+                    <li>{{ $service }}</li>
+                @endforeach
+            </ul>
+        @endif
 
-    @if(!empty($data['services']))
-        <p><strong>Services:</strong></p>
-        <ul>
-            @foreach($data['services'] as $service)
-                <li>{{ $service }}</li>
-            @endforeach
-        </ul>
-    @endif
-
-    @if(!empty($data['contact']))
-        <p><strong>Contact:</strong> {{ $data['contact'] }}</p>
-    @endif
+        @if(!empty($data['contact']))
+            <p><strong>Contact:</strong> {{ $data['contact'] }}</p>
+        @endif
+    </div>
 
     @if(!$loop->last)
         <hr>
