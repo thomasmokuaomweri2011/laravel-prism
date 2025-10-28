@@ -59,7 +59,7 @@
                         ? 'bg-gradient-to-r from-indigo-500 to-blue-500 text-white self-end'
                         : 'bg-white/80 border border-slate-200 text-slate-800'"
                     >
-                        <span x-text="msg.content"></span>
+                        <div x-html="formatMessage(msg.content)"></div>
                     </div>
 
                     <!-- User -->
@@ -141,6 +141,24 @@
                 useSuggestion(s) { this.input = s; this.$nextTick(() => this.$refs.ta.focus()); },
                 clearChat() { this.messages = []; this.error=''; this.input=''; },
                 stop() { if (this.controller) { this.controller.abort(); this.isStreaming = false; } },
+
+                formatMessage(text) {
+                    if (!text) return '';
+                    // Convert Markdown → HTML
+                    let html = marked.parse(text);
+
+                    // Optional: Syntax highlight code blocks
+                    html = html.replace(
+                        /<pre><code class="language-(.+?)">([\s\S]*?)<\/code><\/pre>/g,
+                        (_, lang, code) => {
+                            const safe = code
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;");
+                            return `<pre class="code-block"><code class="language-${lang}">${safe}</code></pre>`;
+                        }
+                    );
+                    return html;
+                },
 
                 async sendMessage() {
                     if (!this.input.trim() || this.isStreaming) return;

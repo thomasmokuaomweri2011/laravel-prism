@@ -35,7 +35,8 @@
                         <div class="size-8 rounded-full bg-gray-200 grid place-items-center">🤖</div>
                     </template>
                     <div class="chat-bubble" :class="msg.role === 'user' ? 'chat-user' : 'chat-assistant'">
-                        <span x-text="msg.content"></span>
+                        <div x-html="formatMessage(msg.content)"></div>
+
                     </div>
                     <template x-if="msg.role === 'user'">
                         <div class="size-8 rounded-full bg-blue-600 text-white grid place-items-center">👤</div>
@@ -94,6 +95,25 @@
                     this.messages = [];
                     this.error = '';
                     this.input = '';
+                },
+                formatMessage(text) {
+                    if (!text) return '';
+
+                    // Parse Markdown into HTML
+                    let html = marked.parse(text, { breaks: true });
+
+                    // Sanitize & highlight code blocks
+                    html = html.replace(
+                        /<pre><code class="language-(.+?)">([\s\S]*?)<\/code><\/pre>/g,
+                        (_, lang, code) => {
+                            const safe = code
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;');
+                            return `<pre><code class="language-${lang} hljs">${safe}</code></pre>`;
+                        }
+                    );
+
+                    return html;
                 },
                 async sendMessage() {
                     if (!this.input.trim() || this.isLoading) return;

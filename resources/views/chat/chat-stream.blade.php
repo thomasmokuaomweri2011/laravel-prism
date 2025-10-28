@@ -25,7 +25,7 @@
                         <div class="size-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white grid place-items-center shadow-sm">🤖</div>
                     </template>
                     <div :class="msg.role === 'user' ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white p-3 rounded-xl max-w-[75%]' : 'bg-white text-gray-800 p-3 rounded-xl max-w-[75%] border border-gray-100 shadow-sm'">
-                        <span x-text="msg.content"></span>
+                        <div x-html="formatMessage(msg.content)"></div>
                     </div>
                     <template x-if="msg.role === 'user'">
                         <div class="size-8 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 text-white grid place-items-center shadow-sm">👤</div>
@@ -78,6 +78,24 @@
                 stop() {
                     if (this.controller) this.controller.abort();
                     this.isStreaming = false;
+                },
+
+                formatMessage(text) {
+                    if (!text) return '';
+                    // Convert Markdown → HTML
+                    let html = marked.parse(text);
+
+                    // Optional: Syntax highlight code blocks
+                    html = html.replace(
+                        /<pre><code class="language-(.+?)">([\s\S]*?)<\/code><\/pre>/g,
+                        (_, lang, code) => {
+                            const safe = code
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;");
+                            return `<pre class="code-block"><code class="language-${lang}">${safe}</code></pre>`;
+                        }
+                    );
+                    return html;
                 },
 
                 async sendMessage() {
