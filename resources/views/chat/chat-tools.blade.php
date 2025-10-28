@@ -191,18 +191,31 @@
                                 // Stream text as usual
                                 else if (event.event === 'text_delta') {
                                     const delta = data.delta || '';
-                                    let msg = this.messages.find(m => m.role === 'assistant' && m.streaming);
-                                    if (!msg) {
-                                        msg = { id: this.newId(), role: 'assistant', streaming: true, content: '' };
-                                        this.messages.push(msg);
+                                    const i = this.messages.findIndex(m => m.streaming);
+
+                                    if (i !== -1) {
+                                        // re-assign the object so Alpine detects it
+                                        this.messages[i] = {
+                                            ...this.messages[i],
+                                            content: this.messages[i].content + delta
+                                        };
+                                    } else {
+                                        // first delta chunk → create new streaming message
+                                        this.messages.push({
+                                            id: this.newId(),
+                                            role: 'assistant',
+                                            streaming: true,
+                                            content: delta
+                                        });
                                     }
-                                    msg.content += delta;
                                 }
 
                                 // End of stream
                                 else if (event.event === 'stream_end') {
-                                    const idx = this.messages.findIndex(m => m.streaming);
-                                    if (idx !== -1) this.messages[idx].streaming = false;
+                                    const i = this.messages.findIndex(m => m.streaming);
+                                    if (i !== -1) {
+                                        this.messages[i] = { ...this.messages[i], streaming: false };
+                                    }
                                     this.isStreaming = false;
                                 }
                             } catch (err) {

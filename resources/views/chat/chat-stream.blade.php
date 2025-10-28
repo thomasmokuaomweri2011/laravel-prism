@@ -111,15 +111,22 @@
                                     const data = JSON.parse(event.data);
                                     if (data.delta) {
                                         const i = idxOf();
-                                        if (i !== -1) this.messages[i].content += data.delta;
+                                        if (i !== -1) {
+                                            // replace object so Alpine detects reactivity change
+                                            this.messages[i] = {
+                                                ...this.messages[i],
+                                                content: this.messages[i].content + data.delta
+                                            };
+                                        }
                                     }
                                 } else if (event.event === 'stream_end') {
                                     this.isStreaming = false;
-                                    console.log('Stream finished');
                                 }
                             } catch (e) {
                                 console.error('Stream chunk parse error', e, event.data);
                             }
+
+                            // ensure scroll stays pinned to bottom
                             this.$nextTick(() => {
                                 const el = document.getElementById('chat-window');
                                 el.scrollTop = el.scrollHeight;
