@@ -112,7 +112,10 @@
     <!-- Streaming Logic -->
     <script type="module">
         import { fetchEventSource as fes } from "https://esm.sh/@microsoft/fetch-event-source";
+        import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
+
         window.fetchEventSource = fes;
+        window.marked = marked;
     </script>
 
     <script>
