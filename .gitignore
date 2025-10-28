@@ -10,3 +10,14 @@
 .env.*
 .idea/
 .DS_Store
+
+# Ignore local SQLite databases
+/database/*.sqlite*
+/database/*.db
+/database/*.sqlite3
+
+# Laravel public storage symlink and artifacts
+/public/storage
+
+# PHPUnit cache
+.phpunit.result.cache
