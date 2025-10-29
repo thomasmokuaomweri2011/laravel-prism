@@ -38,9 +38,18 @@ return [
             'port' => 8085,
         ],
         'web-search' => [
-            'url' => env('MCP_WEB_SEARCH_URL', 'https://laravel-prism.test/mcp/web-search'),
+            // Prefer env override; otherwise derive from APP_URL
+            'url' => env('MCP_WEB_SEARCH_URL', rtrim(env('APP_URL', 'http://localhost'), '/') . '/mcp/web-search'),
             'transport' => \Prism\Relay\Enums\Transport::Http,
-            'verify' => false,
+            // Disable SSL verification by default for local dev; set RELAY_VERIFY_SSL=true in prod with a trusted cert bundle
+            'verify' => filter_var(env('RELAY_VERIFY_SSL', false), FILTER_VALIDATE_BOOL),
         ],
+        'calculator' => [
+            // Prefer env override; otherwise derive from APP_URL
+            'url' => env('MCP_CALCULATOR_URL', rtrim(env('APP_URL', 'http://localhost'), '/') . '/mcp/calculator'),
+            'transport' => \Prism\Relay\Enums\Transport::Http,
+            // Disable SSL verification by default for local dev; set RELAY_VERIFY_SSL=true in prod with a trusted cert bundle
+            'verify' => filter_var(env('RELAY_VERIFY_SSL', false), FILTER_VALIDATE_BOOL),
+            ],
     ],
 ];

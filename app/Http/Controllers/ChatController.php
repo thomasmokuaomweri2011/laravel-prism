@@ -182,14 +182,16 @@ class ChatController extends Controller
             };
         })->filter()->values()->toArray();
 
-        $mcpTools = Relay::tools('web-search');
 
         return Prism::text()
             ->using(Provider::OpenAI, 'gpt-4o')
             ->withSystemPrompt('You are a helpful assistant with access to MCP tools including weather and web search.')
             ->withMessages($messages)
             ->withMaxSteps(3)
-            ->withTools($mcpTools)
+            ->withTools([
+                ...Relay::tools('web-search'),
+                ...Relay::tools('calculator'),
+            ])
             ->asEventStreamResponse();
     }
 }

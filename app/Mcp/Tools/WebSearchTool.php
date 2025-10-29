@@ -22,7 +22,7 @@ class WebSearchTool extends Tool
      */
     public function handle(Request $request): Response
     {
-        $query = $request->input('query');
+        $query = $request->get('query');
 
         $res = Http::get('https://serpapi.com/search', [
             'q' => $query,
@@ -35,6 +35,8 @@ class WebSearchTool extends Tool
                 ->take(3)
                 ->map(fn ($r) => ($r['title'] ?? 'Untitled').' - '.($r['link'] ?? ''))
                 ->implode("\n");
+
+            //logger()->info('Web search results', ['results' => $results]);
 
             return Response::text($results);
         }
