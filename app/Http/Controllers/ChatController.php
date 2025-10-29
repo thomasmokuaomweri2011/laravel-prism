@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\MCP\Tools\WebTools;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Prism\Prism\Enums\Provider;
@@ -180,27 +181,14 @@ class ChatController extends Controller
             };
         })->filter()->values()->toArray();
 
-        return response()->stream(function () use ($messages) {
-            $mcpTools = \App\Services\MCP\Tools\WebTools::getTools();
+        $mcpTools = WebTools::getTools();
 
-            $response = Prism::text()
-                ->using(Provider::OpenAI, 'gpt-4o')
-                ->withSystemPrompt('You are a helpful assistant with access to MCP tools including weather and web search.')
-                ->withMessages($messages)
-                ->withMaxSteps(3)
-                ->withTools($mcpTools)
-                ->asStream();
-
-            foreach ($response as $chunk) {
-                echo "data: " . json_encode(['token' => $chunk->text, 'toolResults' => $chunk->toolResults]) . "\n\n";
-                ob_flush();
-                flush();
-            }
-        }, 200, [
-            'Content-Type' => 'text/event-stream',
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Connection' => 'keep-alive',
-            'X-Accel-Buffering' => 'no',
-        ]);
+        return Prism::text()
+            ->using(Provider::OpenAI, 'gpt-4o')
+            ->withSystemPrompt('You are a helpful assistant with access to MCP tools including weather and web search.')
+            ->withMessages($messages)
+            ->withMaxSteps(3)
+            ->withTools($mcpTools)
+            ->asEventStreamResponse();
     }
 }
