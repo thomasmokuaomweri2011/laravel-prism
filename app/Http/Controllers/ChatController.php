@@ -10,6 +10,7 @@ use Prism\Prism\Prism;
 use Prism\Prism\Facades\Tool;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
+use Prism\Relay\Facades\Relay;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ChatController extends Controller
@@ -181,7 +182,7 @@ class ChatController extends Controller
             };
         })->filter()->values()->toArray();
 
-        $mcpTools = WebTools::getTools();
+        $mcpTools = Relay::tools('web-search');
 
         return Prism::text()
             ->using(Provider::OpenAI, 'gpt-4o')

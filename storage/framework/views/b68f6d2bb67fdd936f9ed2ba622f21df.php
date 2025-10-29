@@ -7,6 +7,7 @@
     <title>Laravel Prism</title>
 
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="min-h-screen flex flex-col text-gray-900 relative overflow-hidden">
@@ -29,6 +30,7 @@
                 ['label' => 'Chat', 'url' => '/chat', 'match' => 'chat'],
                 ['label' => 'Stream', 'url' => '/chat-stream', 'match' => 'chat-stream*'],
                 ['label' => 'Tools', 'url' => '/chat-tools', 'match' => 'chat-tools*'],
+                ['label' => 'Mcp', 'url' => '/chat-mcp', 'match' => 'chat-mcp*'],
             ];
         ?>
 
@@ -54,6 +56,10 @@
 <footer class="text-center py-4 text-gray-300 text-sm bg-black/40 backdrop-blur-md border-t border-white/10">
     © <?php echo e(date('Y')); ?> Powered by Thomas Omweri
 </footer>
+
+<!-- Syntax highlighter -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
 
 </body>
 </html>

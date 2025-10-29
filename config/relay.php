@@ -37,5 +37,10 @@ return [
             'host' => '127.0.0.1',
             'port' => 8085,
         ],
+        'web-search' => [
+            'url' => env('MCP_WEB_SEARCH_URL', 'https://laravel-prism.test/mcp/web-search'),
+            'transport' => \Prism\Relay\Enums\Transport::Http,
+            'verify' => false,
+        ],
     ],
 ];

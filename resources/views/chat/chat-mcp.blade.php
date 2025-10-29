@@ -11,7 +11,7 @@
             <div class="flex items-center gap-3">
                 <div class="size-9 rounded-full bg-indigo-500 text-white grid place-items-center text-lg shadow-sm">⚙️</div>
                 <div>
-                    <h2 class="text-xl font-semibold text-slate-800">Chat with Tools</h2>
+                    <h2 class="text-xl font-semibold text-slate-800">Chat via MCP</h2>
                     <p class="text-xs text-slate-500">Ask your assistant about weather, web results, or code ideas.</p>
                 </div>
             </div>

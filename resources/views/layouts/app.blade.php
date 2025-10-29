@@ -30,6 +30,7 @@
                 ['label' => 'Chat', 'url' => '/chat', 'match' => 'chat'],
                 ['label' => 'Stream', 'url' => '/chat-stream', 'match' => 'chat-stream*'],
                 ['label' => 'Tools', 'url' => '/chat-tools', 'match' => 'chat-tools*'],
+                ['label' => 'Mcp', 'url' => '/chat-mcp', 'match' => 'chat-mcp*'],
             ];
         @endphp
 
